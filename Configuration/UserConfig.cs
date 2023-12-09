@@ -1,18 +1,3 @@
-/*
- * QUANTCONNECT.COM - Democratizing Finance, Empowering Individuals.
- * Lean Algorithmic Trading Engine v2.0. Copyright 2014 QuantConnect Corporation.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
-*/
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -25,13 +10,10 @@ using static System.FormattableString;
 
 namespace QuantConnect.Configuration
 {
-    /// <summary>
-    /// Configuration class loads the required external setup variables to launch the Lean engine.
-    /// </summary>
-    public static class Config
+    public static class UserConfig
     {
         //Location of the configuration file.
-        private static string ConfigurationFileName = "config.json";
+        private static string ConfigurationFileName = "UserConfig.json";
 
         /// <summary>
         /// Set configuration file on-fly
@@ -90,16 +72,8 @@ namespace QuantConnect.Configuration
                 return new JObject
                 {
                     {"algorithm-type-name", "BasicTemplateAlgorithm"},
-                    {"live-mode", false},
-                    {"data-folder", "../../../Data/"},
-                    {"messaging-handler", "QuantConnect.Messaging.Messaging"},
-                    {"job-queue-handler", "QuantConnect.Queues.JobQueue"},
-                    {"api-handler", "QuantConnect.Api.Api"},
-                    {"setup-handler", "QuantConnect.Lean.Engine.Setup.ConsoleSetupHandler"},
-                    {"result-handler", "QuantConnect.Lean.Engine.Results.BacktestingResultHandler"},
-                    {"data-feed-handler", "QuantConnect.Lean.Engine.DataFeeds.FileSystemDataFeed"},
-                    {"real-time-handler", "QuantConnect.Lean.Engine.RealTime.BacktestingRealTimeHandler"},
-                    {"transaction-handler", "QuantConnect.Lean.Engine.TransactionHandlers.BacktestingTransactionHandler"}
+                    {"environment", "backtesting"},
+                    {"algorithm-location", "QuantConnect.Algorithm.CSharp.dll"}
                 };
             }
 
@@ -227,15 +201,15 @@ namespace QuantConnect.Configuration
         public static T GetValue<T>(string key, T defaultValue = default(T))
         {
             // special case environment requests
-            if (key == "environment" && typeof (T) == typeof (string)) return (T) (object) GetEnvironment();
+            if (key == "environment" && typeof(T) == typeof(string)) return (T)(object)GetEnvironment();
 
             var token = GetToken(Settings.Value, key);
             if (token == null)
             {
                 var defaultValueString = defaultValue is IConvertible
-                    ? ((IConvertible) defaultValue).ToString(CultureInfo.InvariantCulture)
+                    ? ((IConvertible)defaultValue).ToString(CultureInfo.InvariantCulture)
                     : defaultValue is IFormattable
-                        ? ((IFormattable) defaultValue).ToString(null, CultureInfo.InvariantCulture)
+                        ? ((IFormattable)defaultValue).ToString(null, CultureInfo.InvariantCulture)
                         : Invariant($"{defaultValue}");
 
                 Log.Trace(Invariant($"Config.GetValue(): {key} - Using default value: {defaultValueString}"));
@@ -255,22 +229,22 @@ namespace QuantConnect.Configuration
 
             if (type.IsEnum)
             {
-                return (T) Enum.Parse(type, value, true);
+                return (T)Enum.Parse(type, value, true);
             }
 
             if (typeof(IConvertible).IsAssignableFrom(type))
             {
-                return (T) Convert.ChangeType(value, type, CultureInfo.InvariantCulture);
+                return (T)Convert.ChangeType(value, type, CultureInfo.InvariantCulture);
             }
 
             // try and find a static parse method
             try
             {
-                var parse = type.GetMethod("Parse", new[]{typeof(string)});
+                var parse = type.GetMethod("Parse", new[] { typeof(string) });
                 if (parse != null)
                 {
-                    var result = parse.Invoke(null, new object[] {value});
-                    return (T) result;
+                    var result = parse.Invoke(null, new object[] { value });
+                    return (T)result;
                 }
             }
             catch (Exception err)
@@ -375,7 +349,7 @@ namespace QuantConnect.Configuration
                     var environments = config["environments"];
                     if (!(environments is JObject)) continue;
 
-                    var settings = ((JObject) environments).SelectToken(env);
+                    var settings = ((JObject)environments).SelectToken(env);
                     if (settings == null) continue;
 
                     // copy values for the selected environment to the root
@@ -389,7 +363,7 @@ namespace QuantConnect.Configuration
                         var jProperty = clone.Property(path);
                         if (jProperty != null) jProperty.Remove();
 
-                        var value = (token is JProperty ? ((JProperty) token).Value : token).ToString();
+                        var value = (token is JProperty ? ((JProperty)token).Value : token).ToString();
                         clone.Add(path, value);
                     }
                 }

@@ -1,0 +1,57 @@
+{
+  "environment": "backtesting", // "live-paper", "backtesting", "live-interactive", "live-interactive-iqfeed"
+
+  // algorithm class selector
+  "algorithm-type-name": "MovingAverageCrossAlgorithmExtended",
+
+  // Algorithm language selector - options CSharp, Python
+  "algorithm-language": "CSharp",
+
+  //Physical DLL location
+  "algorithm-location": "QuantConnect.Algorithm.CSharp.dll",
+
+  "start-date": "2009-01-01",
+
+  "end-date": "2015-10-30",
+
+  "resolution": "Minute",
+
+  "tickers": [
+    "SPY"
+  ],
+
+  "environments": {
+    "backtesting": {
+      "asset-type": {
+        "equity": "true",
+        "forex": "false",
+        "option": "false",
+        "cfd": "false",
+        "commodity": "false",
+        "crypto": "false",
+        "future": "false",
+        "futureoption": "false",
+        "index": "false",
+        "futureoptionchain": "false",
+        "optionchain": "false",
+        "custom": "false"
+      },
+      "live-paper": {
+        "asset-type": {
+          "equity": "true",
+          "forex": "false",
+          "option": "false",
+          "cfd": "false",
+          "commodity": "false",
+          "crypto": "false",
+          "future": "false",
+          "futureoption": "false",
+          "index": "false",
+          "futureoptionchain": "false",
+          "optionchain": "false",
+          "custom": "false"
+        }
+      }
+    }
+  }
+}

@@ -58,6 +58,7 @@ namespace QuantConnect.Lean.Launcher
             }
 
             var liveMode = Config.GetBool("live-mode");
+            var environment = UserConfig.Get("environment");
             //Name thread for the profiler:
             Thread.CurrentThread.Name = "Algorithm Analysis Thread";
 
